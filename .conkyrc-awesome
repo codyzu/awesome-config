@@ -1,0 +1,86 @@
+# conky configuration
+#
+# The list of variables has been removed from this file in favour
+# of keeping the documentation more maintainable.
+# Check http://conky.sf.net for an up-to-date-list.
+#
+# For ideas about how to modify conky, please see:
+# http://crunchbanglinux.org/forums/topic/59/my-conky-config/
+#
+# For help with conky, please see:
+# http://crunchbanglinux.org/forums/topic/2047/conky-help/
+#
+# Enjoy! :)
+##############################################
+# Settings
+##############################################
+background yes
+use_xft yes
+xftfont Liberation Sans:size=12
+xftalpha 1
+update_interval 1.0
+total_run_times 0
+own_window no
+own_window_transparent no
+own_window_type desktop
+own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
+double_buffer yes
+minimum_size 1000
+maximum_width 1280
+draw_shades no
+draw_outline no
+draw_borders no
+#border_width 2
+
+draw_graph_borders no
+#default_color 656667
+default_color ffffff
+default_shade_color 000000
+default_outline_color 828282
+alignment bottom_left
+#gap_x 32
+#gap_y 56
+gap_x 2
+gap_y -8
+no_buffers yes
+uppercase no
+cpu_avg_samples 2
+override_utf8_locale no
+short_units yes
+pad_percents 0
+
+color0 4584EE
+##############################################
+#  Output
+##############################################
+TEXT
+#S Y S T E M    I N F O
+${color0}${time %m/%d %Hh%M}${color}  $nodename (${addr eth0})  \
+${color0}up: ${color}$uptime_short  \
+${color0}mem: ${color}${membar 8, 30}  ${memperc}%  \
+${color0}/: ${color}${fs_bar 8, 30 /} ${fs_used_perc /}% (${fs_free /})  \
+${color0}swp: ${color}${swapbar 8, 30} ${swapperc}% (${swapfree})  \
+${color0}cpu: ${color}${voffset -8}${cpugraph cpu0 16, 60 4584EE FF0000 -t}${voffset -8} \
+${cpu cpu0}% ->${top cpu 1}% ${top name 1}
+#${cpu cpu0}%
+#${color0}cpu: ${color}${voffset -8}${cpugraph cpu0 16, 60 4584EE FF0000 -t}${voffset 10} \
+#${cpu cpu0}% ->${top cpu 1}% ${top name 1}
+#4584EE
+#
+#S H O R T C U T    K E Y S
+#${hr}
+#Alt+F2$alignr Run Dialog
+#Alt+F3$alignr Alt Menu
+#Super+Space$alignr Main Menu
+#Super+Tab$alignr Client Menu
+#Super+t$alignr Terminal
+#Super+f$alignr File Manager
+#Super+e$alignr Editor
+#Super+m$alignr Media Player
+#Super+w$alignr Web Browser
+#Super+h$alignr Task Manager
+#Super+l$alignr Lock Screen
+#Super+v$alignr Volume Control
+#Super+x$alignr Logout
+#PrtSc$alignr Screenshot
+#
