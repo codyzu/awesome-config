@@ -59,20 +59,15 @@ do
 end
 -- }}}
 
-local picturesque = require('picturesque')
-local t = timer { timeout = 3600 }
-t:connect_signal("timeout", picturesque.change_image)
-t:start()
-picturesque.sfw = false
-
-local home = os.getenv("HOME")
-local confdir = home .. "/.config/awesome"
+--local home = os.getenv("HOME")
+local confdir = awful.util.getdir("config")
 local icondir = confdir .. "/icons"
 
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
-beautiful.init("/usr/share/awesome/themes/default/theme.lua")
+--beautiful.init("/usr/share/awesome/themes/default/theme.lua")
+beautiful.init(confdir .. "/current_theme/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "x-terminal-emulator"
@@ -124,12 +119,16 @@ end
 --end
 
 local tagDescriptors = {
-    { "1:☁", awful.layout.suit.floating, },-- "network-cloud.png" },
+    { "1:☁", awful.layout.suit.tile, },-- "network-cloud.png" },
     { "2:▒", awful.layout.suit.tile, },--"terminal.png" },
     { "3:✎", awful.layout.suit.tile, },--"document-text.png" },
     { "4:↟", awful.layout.suit.tile, },-- "folder-horizontal-open.png" },
     { "5:☣", awful.layout.suit.tile, }, --"wrench-screwdriver.png" },
-    { "6:⚒", awful.layout.suit.tile, }, --"wrench-screwdriver.png" },
+    { "6:☹", awful.layout.suit.tile, }, --"wrench-screwdriver.png" },
+    { "7:⚒", awful.layout.suit.tile, }, --"wrench-screwdriver.png" },
+    { "8:☠", awful.layout.suit.tile, }, --"wrench-screwdriver.png" },
+    { "9:☠", awful.layout.suit.tile, }, --"wrench-screwdriver.png" },
+    { "0:✉", awful.layout.suit.tile.bottom, }, --"wrench-screwdriver.png" },
 }
 
 local tags = {}
@@ -156,14 +155,31 @@ myawesomemenu = {
    { "quit", awesome.quit }
 }
 
-mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "Debian", debian_menu.Debian, awful.util.geticonpath("debian-logo") },
-                                    { "&Terminal", terminal, awful.util.geticonpath("terminator") },
+mymainmenu = awful.menu({ items = { 
+                                    { "-----Net-----" },
                                     { "&Firefox", "firefox", awful.util.geticonpath("firefox") },
+                                    { "Evolution", "evolution" },
+                                    { "Skype", "skype" },
+                                    { "----VBox-----" },
+                                    { "&VirtualBox", "virtualbox", awful.util.geticonpath("virtualbox") },
+                                    { "----Files-----" },
+                                    { "Th&unar", "thunar", "/usr/share/pixmaps/Thunar/Thunar-about-logo.png" },
+                                    { "PCManfm", "pcmanfm" },
+                                    { "&Mc", terminal .. " -x mc", awful.util.geticonpath("mc", {"xpm"}) },
+                                    { "----Dev----" },
+                                    { "ideaJ", "/home/cody/idea-IC-129.713/bin/idea.sh" },
+                                    { "eclipse", "/home/cody/eclipse-4.3/eclipse" },
+                                    { "smartSVN", "/home/cody/smartsvn-7_5_5/bin/smartsvn.sh" },
+                                    { "----Utils----" },
+                                    { "&Terminal", terminal, awful.util.geticonpath("terminator") },
                                     { "&htop", terminal .. " -x htop", awful.util.geticonpath("htop") },
                                     { "&Aptitude", terminal .. " -x aptitude" },
-                                    { "Th&unar", "thunar", "/usr/share/pixmaps/Thunar/Thunar-about-logo.png" },
-                                    { "&Mc", terminal .. " -x mc", awful.util.geticonpath("mc", {"xpm"}) }
+                                    { "-------------" },
+                                    { "awesome", myawesomemenu, beautiful.awesome_icon },
+                                    { "Debian", debian_menu.Debian, awful.util.geticonpath("debian-logo") },
+                                    { "-------------" },
+                                    { "Lock", "xtrlock" },
+                                    { "Suspend", "pm-suspend" },
                                   }
                         })
 
@@ -345,7 +361,14 @@ globalkeys = awful.util.table.join(
                   awful.util.getdir("cache") .. "/history_eval")
               end),
     -- Menubar
-    awful.key({ modkey }, "p", function() menubar.show() end)
+    awful.key({ modkey }, "p", function() menubar.show() end),
+
+
+    awful.key({ modkey, "Control", "Shift" }, "l", function () awful.util.spawn_with_shell("xtrlock") end),
+    awful.key({ modkey, "Control", "Shift" }, "p", function () awful.util.spawn_with_shell("scrot '%Y, %B %d, %H:%M:%S @ $wx$h.png' -e 'mv \"$f\" ~/Screenshots/'") end)
+    
+    
+--awful.util.spawn_with_shell("xmodmap /home/cody/.xmodmaprc.tight")    
 )
 
 clientkeys = awful.util.table.join(
@@ -371,8 +394,9 @@ clientkeys = awful.util.table.join(
 -- Bind all key numbers to tags.
 -- Be careful: we use keycodes to make it works on any keyboard layout.
 -- This should map on the top row of your keyboard, usually 1 to 9.
-numKeysOffset = 17
-for i = 1, 9 do
+--numKeysOffset = 17 -- tightVNC ???
+numKeysOffset = 9 -- Normal
+for i = 1, 10 do
     globalkeys = awful.util.table.join(globalkeys,
         awful.key({ modkey }, "#" .. i + numKeysOffset,
                   function ()
@@ -409,8 +433,8 @@ end
 clientbuttons = awful.util.table.join(
     awful.button({ }, 1, function (c) client.focus = c; c:raise() end),
     awful.button({ modkey }, 1, awful.mouse.client.move),
---    awful.button({ modkey }, 3, awful.mouse.client.resize))
-    awful.button({ modkey, "Control" }, 1, awful.mouse.client.resize))
+    awful.button({ modkey }, 3, awful.mouse.client.resize))
+--    awful.button({ modkey, "Control" }, 1, awful.mouse.client.resize))
 
 -- Set keys
 root.keys(globalkeys)
@@ -434,14 +458,33 @@ awful.rules.rules = {
     -- Set Firefox to always map on tags number 2 of screen 1.
     -- { rule = { class = "Firefox" },
     --   properties = { tag = tags[1][2] } },
-    { rule = { class = "Firefox" },
+    { rule = { class = "Firefox" }, except_any = { instance = { "Dialog" }, name = { "Firefox Preferences" } },
+--    { rule = { class = "Firefox" }, except = { instance = "Dialog" },
       properties = { tag = tags[1], switchtotag = tags[1] } },
+    { rule = { name = "Firefox Preferences" },
+      properties = { floating = true } },
+    { rule = { name = "DownThemAll!" },
+      properties = { floating = true } },
     { rule_any = { class = { "X-terminal-emulator", "terminator" } },
       properties = { tag = tags[2], switchtotag = tags[2] } },
     { rule = { class = "Geany" },
       properties = { tag = tags[3], switchtotag = tags[3] } },
     { rule = { class = "Thunar" },
       properties = { tag = tags[4], switchtotag = tags[4] } },
+    { rule = { class = "VirtualBox" }, except_any = { name = { "win7", "Close Virtual Machine" } },
+      properties = { tag = tags[5], switchtotag = tags[5] } },
+    { rule = { class = "VirtualBox", name = "win7" },
+      properties = { tag = tags[6], switchtotag = tags[6] } },
+    --{ rule = {}, except = { machine = "cody-axway" },
+      --properties = { border_width = 3 } },
+    { rule_any = { class = { "Skype", "Pidgin", "Evolution" } },
+      properties = { tag = tags[10] }, switchtotag = tags[10] },
+    --{ rule = { class = "Skype" },
+      --properties = { tag = tags[10] }, switchtotag = tags[10] },
+    --{ rule = { class = "Pidgin" },
+      --properties = { tag = tags[10] }, switchtotag = tags[10] },
+    --{ rule = { class = "Evolution" },
+      --properties = { tag = tags[10] }, switchtotag = tags[10] },
 }
 -- }}}
 
@@ -524,8 +567,27 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 --run_once("conky","-c /home/cody/.config/awesome/.conkyrc-awesome")
 --run_once("xmodmap", "-e \"add mod4 = Super_L\"")
 --awful.util.spawn_with_shell("sleep 5s && xmodmap -e 'add mod4 = Super_L'")
-awful.util.spawn_with_shell("xmodmap /home/cody/.xmodmaprc.tight")
+--awful.util.spawn_with_shell("xmodmap /home/cody/.xmodmaprc.tight")
 --run_once("update-notifier")
 --run_once("nm-applet")
 
-picturesque.change_image()
+-- the volume icon
+run_once("volti", nil, "/usr/bin/python /usr/bin/volti")
+
+-- our wallpaper rotater
+run_once("/opt/extras.ubuntu.com/variety/bin/variety", nil, "/usr/bin/python /opt/extras.ubuntu.com/variety/bin/variety")
+
+-- screenshot tool
+run_once("shutter --min_at_startup", nil, "/usr/bin/perl /usr/bin/shutter --min_at_startup")
+
+-- tell us about needing updates (even if the install now button currently does not work)
+run_once("update-notifier")
+
+-- start dropbox
+awful.util.spawn_with_shell("dropbox start")
+
+-- start the vnc server (attaches to the current x-session)
+run_once("/usr/lib/vino/vino-server")
+
+-- load the keyboard variant for international symbols
+awful.util.spawn_with_shell("setxkbmap us -variant altgr-intl")
